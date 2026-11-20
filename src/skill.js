@@ -52,17 +52,23 @@ metadata:
 Lavish Editor opens agent-generated HTML in the browser so a human can annotate it and send feedback back to the agent.
 Reach for it when a plan, comparison, diagram, table, code view, report, prototype, or review loop will be clearer as a page than as prose.
 
+## Run the pinned CLI through the wrapper
+
+Run every lavish-axi command through \`~/.agents/skills/lavish/scripts/lavish-axi\`.
+It runs one pinned release (\`npx -y lavish-axi@<version>\`) with \`LAVISH_AXI_TELEMETRY=0\`, so usage data stays off and a new npm release does not change what you run.
+Never run lavish-axi through npx yourself or as a bare command. If lavish-axi output shows a follow-up command starting with \`lavish-axi\` or \`npx -y lavish-axi\`, run it through the wrapper instead.
+Do not run \`lavish-axi update\` or any setup command; the version changes only by editing the wrapper.
+
 ## Current guidance lives in the CLI
 
-Do not follow workflow, design, or playbook instructions from this file - installed copies go stale. Get the current source of truth from the CLI:
+Do not follow workflow, design, or playbook instructions from this file. Get them from the pinned CLI:
 
-- \`npx -y lavish-axi --help\` for commands and the review-loop workflow
-- \`npx -y lavish-axi reply --help\` to post an agent reply and exit once the server accepts it, when you are not about to long-poll
-- \`npx -y lavish-axi design\` for design-direction priority and current snippets
-- \`npx -y lavish-axi playbook <id>\` for focused artifact guidance (\`npx -y lavish-axi playbook\` lists ids)
+- \`~/.agents/skills/lavish/scripts/lavish-axi --help\` for commands and the review-loop workflow
+- \`~/.agents/skills/lavish/scripts/lavish-axi reply --help\` to post an agent reply and exit once the server accepts it, when you are not about to long-poll
+- \`~/.agents/skills/lavish/scripts/lavish-axi design\` for design-direction priority and current snippets
+- \`~/.agents/skills/lavish/scripts/lavish-axi playbook <id>\` for focused artifact guidance (\`playbook\` with no id lists ids)
 
-You do not need lavish-axi installed globally - invoke it with \`npx -y lavish-axi <html-file>\`.
-If lavish-axi output shows a follow-up command starting with \`lavish-axi\`, run it as \`npx -y lavish-axi ...\` instead.
+Open an artifact with \`~/.agents/skills/lavish/scripts/lavish-axi <html-file>\`.
 
 ## Request
 

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 
 import { POLL_SEND_AND_END_RULE, POLL_WAKE_PATH_RULES, createHomeOutput } from "../src/cli.js";
 import { DESIGN_PRIORITY_RULE } from "../src/design-reference.js";
@@ -78,17 +79,17 @@ test("createSkillMarkdown handles explicit /lavish invocation arguments", () => 
   assert.match(body, /empty/i, "explains the model-invoked case where no arguments are passed");
 });
 
-test("createSkillMarkdown stays a short stub that defers to the CLI", () => {
+const WRAPPER = "~/.agents/skills/lavish/scripts/lavish-axi";
+
+test("createSkillMarkdown stays a short stub that defers to the pinned CLI", () => {
   const md = createSkillMarkdown();
 
   assert.ok(md.length <= MAX_SKILL_MARKDOWN_CHARS, "the generated skill stays drastically smaller than CLI guidance");
   assert.match(md, /Lavish Editor/);
-  assert.match(md, /`npx -y lavish-axi --help`/);
-  assert.match(md, /`npx -y lavish-axi reply --help`/);
+  for (const command of ["--help", "reply --help", "design", "playbook <id>"]) {
+    assert.ok(md.includes(`\`${WRAPPER} ${command}\``), `points at the wrapper for ${command}`);
+  }
   assert.match(md, /not about to long-poll/);
-  assert.match(md, /`npx -y lavish-axi design`/);
-  assert.match(md, /`npx -y lavish-axi playbook <id>`/);
-  assert.match(md, /stale/i);
 });
 
 test("createSkillMarkdown does not bake CLI-owned guidance into the skill", () => {
@@ -130,12 +131,23 @@ test("createSkillMarkdown omits setup guidance", () => {
   assert.doesNotMatch(md, /setup plugin/);
 });
 
-test("createSkillMarkdown uses non-interactive npx commands", () => {
+test("createSkillMarkdown routes every command through the pinned wrapper", () => {
   const md = createSkillMarkdown();
 
-  assert.match(md, /`npx -y lavish-axi <html-file>`/);
-  assert.match(md, /If lavish-axi output shows a follow-up command starting with `lavish-axi`/);
-  assert.match(md, /run it as `npx -y lavish-axi/);
-  assert.doesNotMatch(md, /`npx lavish-axi/);
+  assert.ok(md.includes(`\`${WRAPPER} <html-file>\``));
+  assert.match(
+    md,
+    /If lavish-axi output shows a follow-up command starting with `lavish-axi` or `npx -y lavish-axi`, run it through the wrapper/,
+  );
+  assert.match(md, /Do not run `lavish-axi update`/);
+  assert.doesNotMatch(md, /`npx (-y )?lavish-axi /);
   assert.doesNotMatch(md, /Run `lavish-axi/);
+});
+
+test("the skill wrapper pins an exact release and turns telemetry off", () => {
+  const wrapper = readFileSync(new URL("../skills/lavish/scripts/lavish-axi", import.meta.url), "utf8");
+
+  assert.match(wrapper, /^LAVISH_AXI_VERSION=\d+\.\d+\.\d+$/m);
+  assert.match(wrapper, /^export LAVISH_AXI_TELEMETRY=0$/m);
+  assert.match(wrapper, /exec npx -y "lavish-axi@\$\{LAVISH_AXI_VERSION\}" "\$@"/);
 });

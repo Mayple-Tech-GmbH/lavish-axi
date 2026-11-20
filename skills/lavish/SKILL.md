@@ -18,8 +18,8 @@ Reach for it when a plan, comparison, diagram, table, code view, report, prototy
 
 Run every lavish-axi command through `~/.agents/skills/lavish/scripts/lavish-axi`.
 It runs one pinned release (`npx -y lavish-axi@<version>`) with `LAVISH_AXI_TELEMETRY=0`, so usage data stays off and a new npm release does not change what you run.
-Never call `npx lavish-axi` or a bare `lavish-axi` directly. If lavish-axi output shows a follow-up command starting with `lavish-axi` or `npx -y lavish-axi`, run it through the wrapper instead.
-Do not run `lavish-axi update`, `setup hooks` or `setup plugin`; the version changes only by editing the wrapper.
+Never run lavish-axi through npx yourself or as a bare command. If lavish-axi output shows a follow-up command starting with `lavish-axi` or `npx -y lavish-axi`, run it through the wrapper instead.
+Do not run `lavish-axi update` or any setup command; the version changes only by editing the wrapper.
 
 ## Current guidance lives in the CLI
 
