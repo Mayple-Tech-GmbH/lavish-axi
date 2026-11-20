@@ -1,0 +1,6 @@
+#!/bin/sh
+# Run the pinned lavish-axi release with usage telemetry off.
+# Bump LAVISH_AXI_VERSION deliberately, after reviewing that release.
+LAVISH_AXI_VERSION=0.1.98
+export LAVISH_AXI_TELEMETRY=0
+exec npx -y "lavish-axi@${LAVISH_AXI_VERSION}" "$@"
